@@ -1,0 +1,24 @@
+{# Kartu satu barang. Dipakai di beranda dan dashboard #}
+<div class="card item-card">
+    {% if item.foto %}
+        <img src="{{ url_for('static', filename='uploads/' + item.foto) }}" class="item-img" alt="{{ item.nama_barang }}">
+    {% else %}
+        <div class="item-placeholder"><i class="fa-solid fa-box-open"></i></div>
+    {% endif %}
+    <div class="p-3">
+        <div class="d-flex justify-content-between mb-2">
+            {% if item.status == 'Selesai' %}
+                <span class="badge badge-selesai rounded-pill"><i class="fa-solid fa-circle-check me-1"></i>Selesai</span>
+            {% elif item.kategori == 'Hilang' %}
+                <span class="badge badge-hilang rounded-pill">Hilang</span>
+            {% else %}
+                <span class="badge badge-ditemukan rounded-pill">Ditemukan</span>
+            {% endif %}
+            <span class="text-muted small">{{ item.tanggal.strftime('%d %b %Y') }}</span>
+        </div>
+        <h6 class="fw-bold mb-1">{{ item.nama_barang }}</h6>
+        <p class="text-muted small mb-1"><i class="fa-solid fa-location-dot text-danger me-1"></i>{{ item.lokasi }}</p>
+        <p class="text-muted small mb-3"><i class="fa-solid fa-user me-1"></i>{{ item.pelapor }}</p>
+        <a href="{{ url_for('detail', id_barang=item.id) }}" class="btn btn-outline-tosca btn-sm w-100">Lihat Detail</a>
+    </div>
+</div>

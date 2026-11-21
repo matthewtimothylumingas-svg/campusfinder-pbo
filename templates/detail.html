@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ b.nama_barang }} - CampusFinder{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <a href="{{ url_for('dashboard') }}" class="text-decoration-none text-muted small"><i class="fa-solid fa-arrow-left me-1"></i>Kembali ke daftar</a>
+    <div class="panel mt-3">
+        <div class="row g-4">
+            <div class="col-md-5">
+                {% if b.foto %}
+                    <img src="{{ url_for('static', filename='uploads/' + b.foto) }}" class="img-fluid rounded-3 w-100" alt="{{ b.nama_barang }}">
+                {% else %}
+                    <div class="item-placeholder rounded-3" style="height:280px"><i class="fa-solid fa-box-open"></i></div>
+                {% endif %}
+            </div>
+            <div class="col-md-7">
+                {% if b.status == 'Selesai' %}<span class="badge badge-selesai rounded-pill">Selesai</span>
+                {% elif b.kategori == 'Hilang' %}<span class="badge badge-hilang rounded-pill">Hilang</span>
+                {% else %}<span class="badge badge-ditemukan rounded-pill">Ditemukan</span>{% endif %}
+                <h3 class="fw-bold mt-2">{{ b.nama_barang }}</h3>
+                <p class="text-muted">{{ b.deskripsi }}</p>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><i class="fa-solid fa-location-dot text-danger me-2"></i>{{ b.lokasi }}</li>
+                    <li class="mb-2"><i class="fa-solid fa-calendar me-2 text-tosca"></i>Kejadian: {{ b.tanggal_kejadian.strftime('%d %B %Y') if b.tanggal_kejadian else '-' }}</li>
+                    <li class="mb-2"><i class="fa-solid fa-user me-2 text-tosca"></i>Pelapor: {{ b.pelapor }}</li>
+                </ul>
+
+                {% if b.status == 'Aktif' and b.kontak %}
+                <a href="https://wa.me/{{ ('62' + b.kontak[1:]) if b.kontak.startswith('0') else b.kontak.lstrip('+') }}" target="_blank" class="btn btn-success rounded-pill px-4">
+                    <i class="fa-brands fa-whatsapp me-1"></i>Hubungi pelapor</a>
+                {% endif %}
+
+                {% if bisa_kelola %}
+                <hr>
+                <div class="d-flex gap-2">
+                    {% if b.status == 'Aktif' %}
+                    <form method="POST" action="{{ url_for('selesai', id_barang=b.id) }}">
+                        <button class="btn btn-outline-tosca btn-sm"><i class="fa-solid fa-circle-check me-1"></i>Tandai selesai</button>
+                    </form>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('hapus', id_barang=b.id) }}" onsubmit="return confirm('Hapus laporan ini?')">
+                        <button class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash me-1"></i>Hapus</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

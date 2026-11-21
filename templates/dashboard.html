@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Daftar Barang - CampusFinder{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0">Daftar Barang</h3>
+            <p class="text-muted small mb-0">Cari barangmu atau barang yang kamu temukan.</p>
+        </div>
+        <a href="{{ url_for('lapor') }}" class="btn btn-tosca"><i class="fa-solid fa-plus me-1"></i>Lapor Barang</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="stat-box"><div class="stat-icon" style="background:#fee2e2;color:#b91c1c"><i class="fa-solid fa-magnifying-glass"></i></div><div><div class="fs-5 fw-bold">{{ stat.hilang }}</div><div class="small text-muted">Hilang</div></div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-box"><div class="stat-icon" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-hand-holding-heart"></i></div><div><div class="fs-5 fw-bold">{{ stat.ditemukan }}</div><div class="small text-muted">Ditemukan</div></div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-box"><div class="stat-icon" style="background:#e0f2fe;color:#0284c7"><i class="fa-solid fa-handshake"></i></div><div><div class="fs-5 fw-bold">{{ stat.selesai }}</div><div class="small text-muted">Selesai</div></div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-box"><div class="stat-icon" style="background:#f0fdfa;color:#0d9488"><i class="fa-solid fa-database"></i></div><div><div class="fs-5 fw-bold">{{ stat.total }}</div><div class="small text-muted">Total</div></div></div></div>
+    </div>
+
+    <form method="GET" class="panel py-3 mb-4">
+        <div class="row g-2">
+            <div class="col-md-5"><input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari nama, ciri-ciri, atau lokasi..."></div>
+            <div class="col-md-3">
+                <select name="kategori" class="form-select">
+                    <option value="">Semua kategori</option>
+                    <option value="Hilang" {{ 'selected' if kategori == 'Hilang' }}>Hilang</option>
+                    <option value="Ditemukan" {{ 'selected' if kategori == 'Ditemukan' }}>Ditemukan</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">Semua status</option>
+                    <option value="Aktif" {{ 'selected' if status == 'Aktif' }}>Aktif</option>
+                    <option value="Selesai" {{ 'selected' if status == 'Selesai' }}>Selesai</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-grid"><button class="btn btn-tosca"><i class="fa-solid fa-magnifying-glass me-1"></i>Cari</button></div>
+        </div>
+    </form>
+
+    {% if laporan %}
+    <div class="row g-4">
+        {% for item in laporan %}<div class="col-sm-6 col-lg-3">{% include '_kartu.html' %}</div>{% endfor %}
+    </div>
+    {% else %}
+    <div class="panel text-center text-muted py-5">
+        <i class="fa-solid fa-inbox fs-1 mb-3"></i>
+        <p class="mb-0">Tidak ada laporan yang cocok. Coba kata kunci lain.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

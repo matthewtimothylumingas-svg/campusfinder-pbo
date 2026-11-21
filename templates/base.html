@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Barang Hilang Kampus{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --tosca: #0d9488; --tosca-dark: #0f766e; --tosca-soft: #f0fdfa; }
+        body { background: #f8fafc; font-family: 'Poppins', 'Segoe UI', sans-serif; }
+        .navbar { background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
+        .nav-link { color: #475569; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { color: var(--tosca); }
+        .btn-tosca { background: var(--tosca); color: #fff; border: none; border-radius: 50px; padding: 10px 24px; font-weight: 600; }
+        .btn-tosca:hover { background: var(--tosca-dark); color: #fff; }
+        .btn-outline-tosca { border: 2px solid var(--tosca); color: var(--tosca); border-radius: 50px; padding: 8px 24px; font-weight: 600; }
+        .btn-outline-tosca:hover { background: var(--tosca); color: #fff; }
+        .text-tosca { color: var(--tosca); }
+        .panel { background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,.04); }
+        .form-control:focus, .form-select:focus { border-color: #14b8a6; box-shadow: 0 0 0 .25rem rgba(13,148,136,.15); }
+        .badge-hilang { background: #fee2e2; color: #b91c1c; }
+        .badge-ditemukan { background: #dcfce7; color: #15803d; }
+        .badge-selesai { background: #e2e8f0; color: #475569; }
+        .item-card { border: none; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.05); transition: transform .2s, box-shadow .2s; height: 100%; }
+        .item-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,.08); }
+        .item-img { height: 170px; width: 100%; object-fit: cover; background: var(--tosca-soft); }
+        .item-placeholder { height: 170px; display: flex; align-items: center; justify-content: center; background: var(--tosca-soft); color: #99d5cf; font-size: 48px; }
+        .stat-box { background: #fff; border-radius: 14px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,.04); display: flex; align-items: center; gap: 14px; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-expand-lg py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-dark" href="{{ url_for('index') }}">
+            <i class="fa-solid fa-box-archive text-tosca me-2"></i>Campus<span class="text-tosca">Finder</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Beranda</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Daftar Barang</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('lapor') }}">Lapor Barang</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                {% if session.user_id %}
+                    <span class="text-secondary small me-1">Halo, <strong>{{ session.nama }}</strong>
+                        {% if session.role == 'admin' %}<span class="badge bg-warning text-dark">Admin</span>{% endif %}</span>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-tosca btn-sm">Masuk</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-tosca btn-sm">Daftar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-3">
+    {% with pesan = get_flashed_messages(with_categories=true) %}
+        {% for kategori, isi in pesan %}
+            <div class="alert alert-{{ kategori }} alert-dismissible fade show" role="alert">{{ isi }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        {% endfor %}
+    {% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer class="text-center text-muted small py-4 mt-5">&copy; 2026 CampusFinder - Tugas Pemrograman Berorientasi Objek</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+barang_hilang.db
+static/uploads/*
+!static/uploads/.gitkeep

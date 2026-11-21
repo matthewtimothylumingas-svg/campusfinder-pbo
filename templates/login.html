@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Masuk - CampusFinder{% endblock %}
+{% block content %}
+<div class="container my-5"><div class="row justify-content-center"><div class="col-md-5 col-lg-4">
+    <div class="panel">
+        <div class="text-center mb-4">
+            <i class="fa-solid fa-box-archive text-tosca fs-1 mb-2"></i>
+            <h4 class="fw-bold">Selamat datang kembali</h4>
+        </div>
+        <form method="POST">
+            
+            <div class="mb-3"><label class="form-label small fw-semibold text-secondary">Email</label><input type="email" name="email" class="form-control" required></div>
+            <div class="mb-4"><label class="form-label small fw-semibold text-secondary">Password</label><input type="password" name="password" class="form-control" required></div>
+            <button type="submit" class="btn btn-tosca w-100">Masuk</button>
+        </form>
+        <p class="text-center small text-muted mt-3 mb-0">Belum punya akun? <a href="{{ url_for('register') }}" class="text-tosca">Daftar di sini</a></p>
+    </div>
+</div></div></div>
+{% endblock %}

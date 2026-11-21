@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Form Laporan Barang{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <div class="row justify-content-center"><div class="col-md-8">
+        <div class="panel">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-2" style="width:60px;height:60px;background:var(--tosca-soft);color:var(--tosca);font-size:24px"><i class="fa-solid fa-bullhorn"></i></div>
+                <h3 class="fw-bold">Form Laporan Barang</h3>
+                <p class="text-muted small">Isi detail barang hilang atau temuan dengan benar.</p>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label small fw-semibold text-secondary">Nama barang</label>
+                        <input type="text" name="nama_barang" class="form-control" placeholder="Contoh: Dompet hitam / Kunci motor" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-secondary">Kategori</label>
+                        <select name="kategori" class="form-select" required>
+                            <option value="Hilang">Hilang</option><option value="Ditemukan">Ditemukan</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold text-secondary">Deskripsi / ciri-ciri</label>
+                        <textarea name="deskripsi" rows="3" class="form-control" placeholder="Warna, merek, atau tanda khusus..." required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Lokasi terakhir / ditemukan</label>
+                        <input type="text" name="lokasi" class="form-control" placeholder="Contoh: Parkiran Fakultas" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Tanggal kejadian</label>
+                        <input type="date" name="tanggal_kejadian" class="form-control" max="{{ hari_ini }}" value="{{ hari_ini }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">No. WhatsApp yang bisa dihubungi</label>
+                        <input type="text" name="kontak" class="form-control" placeholder="08123456789" pattern="[0-9+]{9,15}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Foto barang (opsional)</label>
+                        <input type="file" name="foto" class="form-control" accept=".png,.jpg,.jpeg,.webp">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-tosca w-100 mt-4"><i class="fa-solid fa-paper-plane me-1"></i>Kirim laporan</button>
+                <div class="text-center mt-3"><a href="{{ url_for('dashboard') }}" class="small text-muted text-decoration-none">Batal dan kembali</a></div>
+            </form>
+        </div>
+    </div></div>
+</div>
+{% endblock %}

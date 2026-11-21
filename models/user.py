@@ -22,3 +22,28 @@ class User:
         if tersimpan == password or check_password_hash(tersimpan, password):
             return user
         return None
+
+    # ---------- Fitur admin ----------
+    def ambil_semua(self):
+        """Daftar semua user beserta jumlah laporan masing-masing."""
+        query = """SELECT users.id, users.nama, users.email, users.role,
+                          COUNT(barang.id) AS jumlah_laporan
+                   FROM users LEFT JOIN barang ON barang.user_id = users.id
+                   GROUP BY users.id ORDER BY users.id"""
+        return self.db.jalankan(query, (), "all")
+
+    def ambil_by_id(self, id_user):
+        return self.db.jalankan("SELECT id, nama, email, role FROM users WHERE id = %s",
+                                (id_user,), "one")
+
+    def ubah_role(self, id_user, role):
+        return self.db.jalankan("UPDATE users SET role = %s WHERE id = %s", (role, id_user))
+
+    def hapus(self, id_user):
+        return self.db.jalankan("DELETE FROM users WHERE id = %s", (id_user,))
+
+    def hitung(self):
+        hasil = self.db.jalankan(
+            "SELECT COUNT(*) AS total, COALESCE(SUM(role = 'admin'), 0) AS admin FROM users",
+            (), "one")
+        return hasil or {"total": 0, "admin": 0}

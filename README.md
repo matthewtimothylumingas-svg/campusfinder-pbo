@@ -12,6 +12,7 @@ Proyek Mata Kuliah Pemrograman Berorientasi Objek (PBO).
 - Pencarian dan filter berdasarkan kategori dan status
 - Halaman detail dengan tombol hubungi pelapor (WhatsApp)
 - Tandai laporan "Selesai" dan hapus laporan (pemilik laporan atau admin)
+- **Panel Admin** (`/admin`, khusus role admin): statistik pengguna dan laporan, kelola pengguna (ubah role user/admin, hapus akun beserta laporannya), dan kelola semua laporan (tandai selesai / hapus)
 - Statistik jumlah barang hilang, ditemukan, dan selesai
 
 ## Teknologi

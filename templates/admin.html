@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Panel Admin - CampusFinder{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <div class="mb-4">
+        <h3 class="fw-bold mb-0"><i class="fa-solid fa-user-shield text-tosca me-2"></i>Panel Admin</h3>
+        <p class="text-muted small mb-0">Kelola pengguna dan seluruh laporan di CampusFinder.</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg"><div class="stat-box"><div class="stat-icon" style="background:#f0fdfa;color:#0d9488"><i class="fa-solid fa-users"></i></div><div><div class="fs-5 fw-bold">{{ stat_user.total }}</div><div class="small text-muted">Pengguna</div></div></div></div>
+        <div class="col-6 col-lg"><div class="stat-box"><div class="stat-icon" style="background:#fef3c7;color:#d97706"><i class="fa-solid fa-user-shield"></i></div><div><div class="fs-5 fw-bold">{{ stat_user.admin }}</div><div class="small text-muted">Admin</div></div></div></div>
+        <div class="col-6 col-lg"><div class="stat-box"><div class="stat-icon" style="background:#fee2e2;color:#b91c1c"><i class="fa-solid fa-magnifying-glass"></i></div><div><div class="fs-5 fw-bold">{{ stat.hilang }}</div><div class="small text-muted">Hilang</div></div></div></div>
+        <div class="col-6 col-lg"><div class="stat-box"><div class="stat-icon" style="background:#dcfce7;color:#15803d"><i class="fa-solid fa-hand-holding-heart"></i></div><div><div class="fs-5 fw-bold">{{ stat.ditemukan }}</div><div class="small text-muted">Ditemukan</div></div></div></div>
+        <div class="col-12 col-lg"><div class="stat-box"><div class="stat-icon" style="background:#e0f2fe;color:#0284c7"><i class="fa-solid fa-handshake"></i></div><div><div class="fs-5 fw-bold">{{ stat.selesai }}</div><div class="small text-muted">Selesai</div></div></div></div>
+    </div>
+
+    <!-- Kelola pengguna -->
+    <div class="panel mb-4">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-users text-tosca me-2"></i>Kelola Pengguna</h5>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light"><tr><th>No</th><th>Nama</th><th>Email</th><th>Role</th><th>Laporan</th><th class="text-end">Aksi</th></tr></thead>
+                <tbody>
+                {% for u in pengguna %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="fw-semibold">{{ u.nama }}{% if u.id == session.user_id %} <span class="text-muted small">(kamu)</span>{% endif %}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{% if u.role == 'admin' %}<span class="badge bg-warning text-dark">Admin</span>{% else %}<span class="badge bg-light text-dark border">User</span>{% endif %}</td>
+                    <td>{{ u.jumlah_laporan }}</td>
+                    <td class="text-end">
+                    {% if u.id != session.user_id %}
+                        <form method="POST" action="{{ url_for('ubah_role', id_user=u.id) }}" class="d-inline">
+                            <button class="btn btn-outline-secondary btn-sm">{{ 'Jadikan User' if u.role == 'admin' else 'Jadikan Admin' }}</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('hapus_pengguna', id_user=u.id) }}" class="d-inline" onsubmit="return confirm('Hapus akun {{ u.nama }} beserta semua laporannya?')">
+                            <button class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    {% else %}<span class="text-muted small">-</span>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Kelola semua laporan -->
+    <div class="panel">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-list-ul text-tosca me-2"></i>Kelola Semua Laporan</h5>
+        {% if laporan %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light"><tr><th>No</th><th>Barang</th><th>Kategori</th><th>Pelapor</th><th>Status</th><th>Tanggal</th><th class="text-end">Aksi</th></tr></thead>
+                <tbody>
+                {% for b in laporan %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="fw-semibold"><a href="{{ url_for('detail', id_barang=b.id) }}" class="text-decoration-none text-dark">{{ b.nama_barang }}</a></td>
+                    <td>{% if b.kategori == 'Hilang' %}<span class="badge badge-hilang">Hilang</span>{% else %}<span class="badge badge-ditemukan">Ditemukan</span>{% endif %}</td>
+                    <td>{{ b.pelapor }}</td>
+                    <td>{% if b.status == 'Selesai' %}<span class="badge badge-selesai">Selesai</span>{% else %}<span class="badge bg-light text-dark border">Aktif</span>{% endif %}</td>
+                    <td class="text-muted small">{{ b.tanggal.strftime('%d %b %Y') }}</td>
+                    <td class="text-end">
+                        {% if b.status == 'Aktif' %}
+                        <form method="POST" action="{{ url_for('selesai', id_barang=b.id) }}" class="d-inline">
+                            <input type="hidden" name="dari" value="admin">
+                            <button class="btn btn-outline-success btn-sm"><i class="fa-solid fa-circle-check me-1"></i>Selesai</button>
+                        </form>
+                        {% endif %}
+                        <form method="POST" action="{{ url_for('hapus', id_barang=b.id) }}" class="d-inline" onsubmit="return confirm('Hapus laporan ini?')">
+                            <input type="hidden" name="dari" value="admin">
+                            <button class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-3 mb-0">Belum ada laporan.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

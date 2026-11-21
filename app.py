@@ -39,6 +39,28 @@ def login_required(f):
     return wrapper
 
 
+def admin_required(f):
+    """Hanya akun dengan role admin yang boleh membuka halaman ini."""
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Silakan login terlebih dahulu.', 'warning')
+            return redirect(url_for('login'))
+        if session.get('role') != 'admin':
+            abort(403)
+        return f(*args, **kwargs)
+    return wrapper
+
+
+def hapus_file_foto(nama_file):
+    """Hapus file foto dari folder uploads (aman jika file tidak ada)."""
+    if nama_file:
+        try:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(nama_file)))
+        except OSError:
+            pass
+
+
 def simpan_foto(file):
     """Simpan foto upload dengan nama unik, return nama file (atau None)."""
     if not file or file.filename == '':
@@ -151,6 +173,8 @@ def selesai(id_barang):
         abort(403)
     barang_model.ubah_status(id_barang, 'Selesai')
     flash('Laporan ditandai selesai.', 'success')
+    if request.form.get('dari') == 'admin' and session.get('role') == 'admin':
+        return redirect(url_for('admin'))
     return redirect(url_for('detail', id_barang=id_barang))
 
 
@@ -161,8 +185,55 @@ def hapus(id_barang):
     if not laporan or not boleh_kelola(laporan):
         abort(403)
     barang_model.hapus(id_barang)
+    hapus_file_foto(laporan['foto'])
     flash('Laporan dihapus.', 'success')
+    if request.form.get('dari') == 'admin' and session.get('role') == 'admin':
+        return redirect(url_for('admin'))
     return redirect(url_for('dashboard'))
+
+
+# ---------- Panel admin ----------
+@app.route('/admin')
+@admin_required
+def admin():
+    return render_template('admin.html',
+                           stat=barang_model.statistik(),
+                           stat_user=user_model.hitung(),
+                           pengguna=user_model.ambil_semua(),
+                           laporan=barang_model.ambil_semua_laporan())
+
+
+@app.route('/admin/pengguna/<int:id_user>/role', methods=['POST'])
+@admin_required
+def ubah_role(id_user):
+    target = user_model.ambil_by_id(id_user)
+    if not target:
+        abort(404)
+    if id_user == session['user_id']:
+        flash('Kamu tidak bisa mengubah role akunmu sendiri.', 'warning')
+        return redirect(url_for('admin'))
+    role_baru = 'user' if target['role'] == 'admin' else 'admin'
+    user_model.ubah_role(id_user, role_baru)
+    flash(f"Role {target['nama']} sekarang: {role_baru}.", 'success')
+    return redirect(url_for('admin'))
+
+
+@app.route('/admin/pengguna/<int:id_user>/hapus', methods=['POST'])
+@admin_required
+def hapus_pengguna(id_user):
+    target = user_model.ambil_by_id(id_user)
+    if not target:
+        abort(404)
+    if id_user == session['user_id']:
+        flash('Kamu tidak bisa menghapus akunmu sendiri.', 'warning')
+        return redirect(url_for('admin'))
+    # hapus foto dan laporan milik user itu dulu, baru akunnya
+    for foto in barang_model.ambil_foto_by_user(id_user):
+        hapus_file_foto(foto)
+    barang_model.hapus_by_user(id_user)
+    user_model.hapus(id_user)
+    flash(f"Akun {target['nama']} beserta laporannya dihapus.", 'success')
+    return redirect(url_for('admin'))
 
 
 if __name__ == '__main__':

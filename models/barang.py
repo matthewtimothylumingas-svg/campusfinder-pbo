@@ -52,3 +52,12 @@ class Barang:
                    FROM barang"""
         hasil = self.db.jalankan(query, (), "one")
         return hasil or {"total": 0, "hilang": 0, "ditemukan": 0, "selesai": 0}
+
+    def ambil_foto_by_user(self, id_user):
+        """Nama file foto milik satu user (untuk dibersihkan saat user dihapus)."""
+        hasil = self.db.jalankan("SELECT foto FROM barang WHERE user_id = %s AND foto IS NOT NULL",
+                                 (id_user,), "all")
+        return [h["foto"] for h in hasil]
+
+    def hapus_by_user(self, id_user):
+        return self.db.jalankan("DELETE FROM barang WHERE user_id = %s", (id_user,))

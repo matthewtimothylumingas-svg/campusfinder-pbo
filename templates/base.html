@@ -44,6 +44,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Beranda</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Daftar Barang</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('lapor') }}">Lapor Barang</a></li>
+                {% if session.role == 'admin' %}<li class="nav-item"><a class="nav-link" href="{{ url_for('admin') }}"><i class="fa-solid fa-user-shield me-1"></i>Panel Admin</a></li>{% endif %}
             </ul>
             <div class="d-flex align-items-center gap-2">
                 {% if session.user_id %}

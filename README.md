@@ -3,7 +3,7 @@
 Aplikasi web untuk melaporkan dan mencari barang hilang atau ditemukan di area kampus.
 Proyek Mata Kuliah Pemrograman Berorientasi Objek (PBO).
 
-**Live demo:** (isi link PythonAnywhere kamu, contoh: https://usernamekamu.pythonanywhere.com)
+**Live demo:** https://campusfinder.pythonanywhere.com
 
 ## Fitur
 - Registrasi, login, dan logout (password terenkripsi)
